@@ -7,10 +7,10 @@ from utils.logging_config import setup_logging
 logger = setup_logging()
 
 load_dotenv()
-DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
+webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
 
 
-def send_discord_embed(webhook_url: str, embed: dict) -> None:
+def send_discord_embed(embed: dict) -> None:
     """Send a Discord embed to the specified webhook URL."""
     data = {"embeds": [embed]}
     try:
@@ -44,13 +44,18 @@ def get_embed_color(rarity_name: str) -> int:
               "Mil-Spec": "#4b69ff", "Restricted": "#8847ff", 
               "Classified": "#d32ce6", "Covert": "#eb4b4b", 
               "Contraband": "#e4ae39"}
-    return int(color_dict.get(rarity_name, "#ffffff").lstrip('#'), 16)
+    
+    # update this to return int color if rarity name contains any of the keys in color_dict, otherwise return white
+    for key in color_dict:
+        if key.lower() in rarity_name.lower():
+            return int(color_dict[key].lstrip('#'), 16)
+    return int("FFFFFF", 16)
 
 def post_listings_to_discord(df: pd.DataFrame) -> None:
     """Post the filtered listings from passed DataFrame to Discord using embeds."""
-    if not DISCORD_WEBHOOK_URL:
+    if not webhook_url:
         raise RuntimeError("DISCORD_WEBHOOK_URL is not set in environment")
     for _, listing in df.iterrows():
         embed = create_discord_embed(listing)
-        send_discord_embed(DISCORD_WEBHOOK_URL, embed)
+        send_discord_embed(embed)
     logger.info(f"Posted {len(df)} listings to Discord")
