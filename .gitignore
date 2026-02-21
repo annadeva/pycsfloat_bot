@@ -1,0 +1,16 @@
+# venv folders
+.venv/
+env/
+venv/
+
+# Environment variable files
+.env
+
+# Python and Jupyter files
+__pycache__/
+*.ipynb
+*.pyc
+
+# Data and log files
+logs/
+data/

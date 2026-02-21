@@ -1,0 +1,19 @@
+Future Features
+
+Discord Bot Features Wish List:
+- Responding to embed mesage with emoji triggers action that performs pricing calculations
+- User messages or triggers that will modify search parameters of csfloat api request
+
+
+Listing Calculations:
+- Add in functions to calculate planned sell price and estimated profit
+
+
+Persistent Memory Store:
+- Append all filtered listings to either DB or Excel/Google sheet
+- Potentially add in helper function to clear out memory store
+- Potential interim solution: 
+
+
+Miscellaneous:
+- Restructure repo and add in logging/data folders
