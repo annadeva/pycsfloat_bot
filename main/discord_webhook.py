@@ -33,7 +33,7 @@ def create_discord_embed(listing: dict) -> dict:
             {"name": "Float Factor", "value": f"{listing['float_factor']:.2f}", "inline": True},
             {"name": "Global Listings", "value": str(listing['global_listings']), "inline": True},
             {"name": "Min Bargain Price", "value": f"${listing['min_bargain_price']:.2f}", "inline": True},
-            {"name": "Max Bargain Discount", "value": f"{listing['max_bargain_discount']:.2f}", "inline": True}
+            {"name": "Max Bargain Discount", "value": f"{listing['max_bargain_discount']:.2f}%", "inline": True}
         ],
         "footer": {"text": f"Listed at {listing['created_at']}"},
     }

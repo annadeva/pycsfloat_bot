@@ -14,3 +14,6 @@ __pycache__/
 # Data and log files
 logs/
 data/
+
+# Miscellaneous
+*.bat

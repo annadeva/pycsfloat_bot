@@ -27,6 +27,9 @@ def create_listing_url(listing_id: str) -> str:
 def convert_price_to_dollars(price_in_cents: int) -> float:
     return price_in_cents / 100.0
 
+def convert_to_percentage(discount: float) -> float:
+    return discount / 100.0
+
 def get_item_details(df: pd.DataFrame) -> pd.DataFrame:
     """
     Extract item details from the nested "item" column and create new columns for each detail. 
@@ -94,6 +97,9 @@ def clean_listings_df(df: pd.DataFrame) -> pd.DataFrame:
     df['listing_price'] = df['listing_price'].apply(convert_price_to_dollars)
     df['estimated_price'] = df['estimated_price'].apply(convert_price_to_dollars)
     df['min_bargain_price'] = df['min_bargain_price'].apply(convert_price_to_dollars)
+
+    # Convert max bargain discount to percentage
+    df['max_bargain_discount'] = df['max_bargain_discount'].apply(convert_to_percentage)
 
     columns_to_move = ['item_name', 'listing_price', 'estimated_price', 'float_factor', 'float_value', 'listing_url']
     new_order = columns_to_move + [c for c in df.columns if c not in columns_to_move]
