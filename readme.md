@@ -13,9 +13,9 @@ Python script that retrieves CS item listings from the CSFloat API, processes th
 
 2. **Create venv**
     ```bash
-    python -m venv
+    python -m venv venv
     source venv/Scripts/activate
-    pip install requirements.txt
+    pip install -r requirements.txt 
     ```
 
 4. **Populate env with API keys**
