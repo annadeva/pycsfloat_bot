@@ -69,7 +69,6 @@ def get_seller_details(df: pd.DataFrame) -> pd.DataFrame:
     df = df.drop(columns=['seller'], axis=1)
     return df
 
-
 def clean_listings_df(df: pd.DataFrame) -> pd.DataFrame:
     """Clean and transform the raw listings DataFrame by extracting relevant details, converting price formats, and reordering columns."""
     keep_columns = ['id', 'created_at', 'seller', 'price', 'reference',
@@ -104,30 +103,42 @@ def clean_listings_df(df: pd.DataFrame) -> pd.DataFrame:
     columns_to_move = ['item_name', 'listing_price', 'estimated_price', 'float_factor', 'float_value', 'listing_url']
     new_order = columns_to_move + [c for c in df.columns if c not in columns_to_move]
     df = df[new_order]
+    df.where(~df.isna(), None)
     return df.sort_values(by='created_at', ascending=False, inplace=False)
 
 def handle_missing_estimated_price(row: dict) -> str:
+    # Agent listings do not have estimated price or bargain discount
     if row['estimated_price'] is None and row['type'] == 'agent':
         return "Keep"
-    elif row['estimated_price'] is None:
+    # Else if doesn't have estimated price is skin that rarely sells, or if 
+    # less than the listing price, drop it
+    elif (row['estimated_price'] is None) or (row['estimated_price'] < row['listing_price']):
         return "Drop"
-    elif row['estimated_price'] < row['listing_price']:
+    # If the estimated price is equal to the listing price and the max bargain discount is less than 4.5%, drop it
+    elif row['estimated_price'] == row['listing_price'] and row['max_bargain_discount'] < 4.5:
         return "Drop"
-    elif row['estimated_price'] == row['listing_price'] and row['max_bargain_discount'] < 300.0:
+    # check if the listed price is greater than the estimated price - 1%, if so, drop it
+    elif row['listing_price'] > (row['estimated_price'] * 0.99):
+        return "Drop"
+    # Check if the max bargain discount is less than or equal to 2.5% or if it's missing, drop it
+    elif (row['max_bargain_discount'] <= 2.5 )or (row['max_bargain_discount'] is None):
         return "Drop"
     else:
         return "Keep"
-     
+
 def filter_listings_df(df: pd.DataFrame) -> pd.DataFrame:
     """Filter the listings DataFrame to keep only relevant listings based on type, float factor, and estimated price criteria."""
     logger.info(f"Number of listings before filtering: {len(df)}")
     df = df[df['type'].isin(['skin', 'agent'])]
-    df = df[df['float_factor'] >= 0.95]
+    df = df[df['float_factor'] >= 1.0]
+
+    # if min_bargain_price + 4.5% is greater than estimated price drop
+    df = df[(df['min_bargain_price'] * 1.045) <= df['estimated_price']]
 
     df["keep_listing"] = df.apply(handle_missing_estimated_price, axis=1)
     df = df[df['keep_listing'] != "Drop"]
-    df = df.drop(columns=['keep_listing', 'type'], axis=1)
 
+    df = df.drop(columns=['keep_listing', 'type'], axis=1)
     logger.info(f"Number of listings after filtering: {len(df)}")
     return df
 

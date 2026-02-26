@@ -18,9 +18,10 @@ def get_request_headers() -> dict:
 
 def get_listing_params(limit: int = 50, 
                        sort_by: str = "most_recent", 
-                       min_price: int = 5000, 
+                       min_price: int = 3000, 
+                       max_price: int = 700000,
                        type: str = "buy_now") -> dict:
-    return f'/listings?limit={limit}&sort_by={sort_by}&min_price={min_price}&type={type}'
+    return f'/listings?limit={limit}&sort_by={sort_by}&min_price={min_price}&max_price={max_price}&type={type}'
 
 def make_listing_request() -> pd.DataFrame | None:
     try:

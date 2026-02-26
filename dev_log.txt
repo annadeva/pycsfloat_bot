@@ -17,3 +17,7 @@ Persistent Memory Store:
 
 Miscellaneous:
 - Restructure repo and add in logging/data folders
+
+
+Observed Bugs:
+- Retained listings where Min Bargain Price = $nan and Max Bargain Discount = nan%
